@@ -64,6 +64,10 @@ class Application(tk.Tk):
 
         result = calc_class(data).calculate()
 
+        print("TOOL:", tool)
+        print("RESULT TYPE:", type(result))
+        print("RESULT:", result)
+
         # Switch results frame if needed
         if tool != self.current_tool:
             if self.results_frame:
@@ -79,8 +83,6 @@ class Application(tk.Tk):
 
         if self.results_frame:
             self.results_frame.show_results(result)
-
-        print("RESULT:", result)
 
 
 # ---------------- SIDEBAR ----------------

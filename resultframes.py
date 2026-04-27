@@ -12,20 +12,50 @@ class RolleteResultsFrame(BaseResultsFrame):
     def __init__(self, parent):
         super().__init__(parent)
 
-        self.text = tk.Text(self)
-        self.text.grid(row=0, column=0, sticky="nsew")
+        columns = ("razao", "erro", "A", "B", "C", "D")
+
+        self.tree = ttk.Treeview(self, columns=columns, show="headings")
+
+        self.tree.heading("razao", text="Razão")
+        self.tree.heading("erro", text="Erro")
+        self.tree.heading("A", text="A")
+        self.tree.heading("B", text="B")
+        self.tree.heading("C", text="C")
+        self.tree.heading("D", text="D")
+
+        # Optional: column widths
+        self.tree.column("razao", width=100)
+        self.tree.column("erro", width=100)
+
+        self.tree.grid(row=0, column=0, sticky="nsew")
+
+        # Scrollbar (important for tables)
+        scrollbar = ttk.Scrollbar(self, orient="vertical", command=self.tree.yview)
+        self.tree.configure(yscroll=scrollbar.set)
+
+        scrollbar.grid(row=0, column=1, sticky="ns")
 
         self.rowconfigure(0, weight=1)
         self.columnconfigure(0, weight=1)
 
     def show_results(self, results):
-        self.text.delete("1.0", tk.END)
+        # Clear table
+        for row in self.tree.get_children():
+            self.tree.delete(row)
 
+        if not results:
+            return
+
+        # Insert rows
         for r in results:
-            self.text.insert(
-                tk.END,
-                f"A={r['A']} B={r['B']} C={r['C']} D={r['D']} err={r['erro']:.5f}\n"
-            )
+            self.tree.insert("", "end", values=(
+                f"{r['razaom']:.8f}",
+                f"{r['erro']:.8f}",
+                r["A"],
+                r["B"],
+                r["C"],
+                r["D"],
+            ))
 
 
 # ---------------- ESFERAS ----------------
