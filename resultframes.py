@@ -8,7 +8,7 @@ class BaseResultsFrame(ttk.Frame):
 
 
 # ---------------- ROLLETE ----------------
-class RolleteResultsFrame(BaseResultsFrame):
+class RodasResultsFrame(BaseResultsFrame):
     def __init__(self, parent):
         super().__init__(parent)
 
@@ -68,6 +68,7 @@ class EsferasResultsFrame(BaseResultsFrame):
 
 
 RESULT_FRAMES = {
-    "rollete": RolleteResultsFrame,
+    "rollete": RodasResultsFrame,
+    "reishauer": RodasResultsFrame,
     "esferas": EsferasResultsFrame,
 }

@@ -1,7 +1,12 @@
 import tkinter as tk
 from tkinter import ttk
 
-from inputframes import INPUT_FRAMES
+from inputframes import (FrameRollete,
+    FrameEsferas,
+    FrameReishauer,
+    FrameRoda,
+    FrameEngrenagem,
+    FrameSemFim,)
 from cotas import COTAS
 from rodasdemuda import RODAS
 
@@ -20,15 +25,15 @@ class Application(tk.Tk):
         self.columnconfigure(2, weight=3)
         self.rowconfigure(0, weight=1)
 
-        # Sidebar
+        # Menu lateral
         self.sidebar = Sidebar(self, self.load_frame)
         self.sidebar.grid(row=0, column=0, sticky="nsew")
 
-        # Input area
+        # Inputs
         self.content = ttk.Frame(self)
         self.content.grid(row=0, column=1, sticky="nsew")
 
-        # Results area
+        # Resultados
         self.results_frame = None
         self.current_tool = None
 

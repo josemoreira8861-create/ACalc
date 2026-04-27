@@ -116,12 +116,3 @@ class FrameSemFim(BaseToolFrame):
     def __init__(self, parent, on_calculate):
         super().__init__(parent, "semfim", on_calculate)
         ttk.Label(self, text="Sem-fim").grid()
-
-INPUT_FRAMES = {
-    "rollete": FrameRollete,
-    "esferas": FrameEsferas,
-    "reishauer": FrameReishauer,
-    "ekroda": FrameRoda,
-    "ekengrenagem": FrameEngrenagem,
-    "sem_fim": FrameSemFim,
-}
