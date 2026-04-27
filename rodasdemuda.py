@@ -172,9 +172,91 @@ class Reishauer: # Modelo Reishauer
         results.sort(key=itemgetter("erro"))
 
         return results[:12]
+    
+class ReishauerDressage: # Modelo Reishauer Dressage
+    def __init__(self, data):
+        self.artigo = data["artigo"]
+        self.modulo = data["modulo"]
+
+        self.razao = 6/25.4*self.modulo
+
+        self._conj_rodas = (
+            35,36,38,40,40,41,42,43,44,45,45,46,47,48,49,50,50,51,
+            52,53,54,55,56,57,58,59,60,60,61,62,63,64,65,66,67,68,
+            69,70,70,71,72,73,74,75,75,76,78,80,80,81,82,84,85,86,
+            87,88,90,90,91,92,93,94,95,96,100,101,103,105,106,108,
+            110,112,118,120)
+        
+    def limites(self, A, B, C, D):
+        AB = A + B
+        CD = C + D
+        total = AB + CD
+
+        return (
+            A <= 60 and
+            B <= (CD - 34) and
+            C <= (AB - 23) and
+            D <= 105 and
+            AB <= 166 and
+            CD <= 145 and
+            total <= 311 and
+            (
+                (CD >= 108 and total >= 216) or
+                (AB >= 84 and total >= 229)
+            )
+        )
+
+    def calculate(self):
+        return self.rodasdemuda()
+
+    def rodasdemuda(self, erro=0.0001):
+        rodas = self._conj_rodas
+        n = len(rodas)
+
+        results = []
+
+        for i in range(n):
+            A = rodas[i]
+            for j in range(n):
+                if j == i:
+                    continue
+                B = rodas[j]
+
+                for k in range(n):
+                    if k in (i, j):
+                        continue
+                    C = rodas[k]
+
+                    for l in range(n):
+                        if l in (i, j, k):
+                            continue
+                        D = rodas[l]
+
+                        razaom = (A / B) * (C / D)
+                        err = fabs(self.razao - razaom)
+
+                        if err <= erro and self.limites(A, B, C, D):
+                            results.append({
+                                "A": A,
+                                "B": B,
+                                "C": C,
+                                "D": D,
+                                "erro": err,
+                                "razaom": razaom
+                            })
+
+        keyfunc = lambda d: (d["A"], d["B"], d["C"], d["D"])
+        results = sorted(results, key=keyfunc)
+        results = [next(g[1]) for g in groupby(results, key=keyfunc)]
+
+        results.sort(key=itemgetter("erro"))
+
+        return results[:12]
+
 
 # Lista das classes para ser chamada na acalc.py
 RODAS = {
     "rollete": Rollete,
     "reishauer": Reishauer,
+    "reishauer_dressage": ReishauerDressage,
 }

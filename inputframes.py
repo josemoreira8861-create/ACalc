@@ -98,6 +98,28 @@ class FrameReishauer(BaseToolFrame):
             "beta": self.beta.get(),
         })
 
+class FrameReishauerDressage(BaseToolFrame):
+    def __init__(self, parent, on_calculate):
+        super().__init__(parent, "reishauer_dressage", on_calculate)
+
+        self.artigo = tk.StringVar()
+        self.modulo = tk.DoubleVar()
+
+        ttk.Label(self, text="Artigo").grid(row=0, column=0)
+        ttk.Entry(self, textvariable=self.artigo).grid(row=0, column=1)
+
+        ttk.Label(self, text="Modulo").grid(row=1, column=0)
+        ttk.Entry(self, textvariable=self.modulo).grid(row=1, column=1)
+
+        ttk.Button(self, text="Calculate", command=self.send_data)\
+            .grid(row=4, column=0, columnspan=2)
+
+    def send_data(self):
+        self.on_calculate(self.tool_name, {
+            "artigo": self.artigo.get(),
+
+            "modulo": self.modulo.get(),
+        })
 
 # ---------------- PLACEHOLDERS ----------------
 class FrameRoda(BaseToolFrame):

@@ -47,7 +47,7 @@ class RodasResultsFrame(BaseResultsFrame):
         for r in results:
             self.tree.insert("", "end", values=(
                 f"{r['razaom']:.8f}",
-                f"{r['erro']:.8f}",
+                f"{r['erro']:.10f}",
                 r["A"],
                 r["B"],
                 r["C"],
@@ -70,5 +70,6 @@ class EsferasResultsFrame(BaseResultsFrame):
 RESULT_FRAMES = {
     "rollete": RodasResultsFrame,
     "reishauer": RodasResultsFrame,
+    "reishauer_dressage":RodasResultsFrame,
     "esferas": EsferasResultsFrame,
 }
