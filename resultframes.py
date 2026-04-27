@@ -23,17 +23,14 @@ class RolleteResultsFrame(BaseResultsFrame):
         self.tree.heading("C", text="C")
         self.tree.heading("D", text="D")
 
-        # Optional: column widths
         self.tree.column("razao", width=100)
         self.tree.column("erro", width=100)
+        self.tree.column("A", width=100)
+        self.tree.column("B", width=100)
+        self.tree.column("C", width=100)
+        self.tree.column("D", width=100) 
 
         self.tree.grid(row=0, column=0, sticky="nsew")
-
-        # Scrollbar (important for tables)
-        scrollbar = ttk.Scrollbar(self, orient="vertical", command=self.tree.yview)
-        self.tree.configure(yscroll=scrollbar.set)
-
-        scrollbar.grid(row=0, column=1, sticky="ns")
 
         self.rowconfigure(0, weight=1)
         self.columnconfigure(0, weight=1)
