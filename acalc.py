@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 
-from frames import (
+from inputframes import (
     FrameEsferas,
     FrameRoda,
     FrameEngrenagem,
@@ -11,11 +11,9 @@ from frames import (
 )
 
 from cotas import COTAS
+from rodasdemuda import RODAS
 
-
-def main():
-    app = Application()
-    app.mainloop()
+from resultframes import RESULT_FRAMES
 
 
 class Application(tk.Tk):
@@ -26,67 +24,89 @@ class Application(tk.Tk):
         self.geometry("1200x700")
 
         self.columnconfigure(0, weight=1)
-        self.columnconfigure(1, weight=5)
+        self.columnconfigure(1, weight=3)
+        self.columnconfigure(2, weight=3)
         self.rowconfigure(0, weight=1)
 
         # Sidebar
         self.sidebar = Sidebar(self, self.load_frame)
-        self.sidebar.grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
+        self.sidebar.grid(row=0, column=0, sticky="nsew")
 
-        # Content area
+        # Input area
         self.content = ttk.Frame(self)
         self.content.grid(row=0, column=1, sticky="nsew")
 
+        # Results area
+        self.results_frame = None
+        self.current_tool = None
+
         self.current_frame = None
 
-    # Carrega a frame da ferramenta pretendida
+    # ---------------- LOAD INPUT FRAME ----------------
     def load_frame(self, frame_class):
         if self.current_frame:
             self.current_frame.destroy()
 
         self.current_frame = frame_class(self.content, self.handle_calculate)
-        self.current_frame.pack(fill="both", expand=True)
+        self.current_frame.grid(sticky="nsew")
 
-    # Vai buscar o código de cálculo da ferramenta pretendida
+    # ---------------- ROUTER ----------------
     def handle_calculate(self, tool, data):
-        calc_class = COTAS.get(tool)
 
-        if calc_class:
-            result = calc_class(data).calculate()
-            print(f"{tool} result:", result)
+        # Decide which calculator set to use
+        calc_class = (
+            COTAS.get(tool)
+            or RODAS.get(tool)
+        )
+
+        if not calc_class:
+            return
+
+        result = calc_class(data).calculate()
+
+        # Switch results frame if needed
+        if tool != self.current_tool:
+            if self.results_frame:
+                self.results_frame.destroy()
+
+            frame_class = RESULT_FRAMES.get(tool)
+
+            if frame_class:
+                self.results_frame = frame_class(self)
+                self.results_frame.grid(row=0, column=2, sticky="nsew")
+
+            self.current_tool = tool
+
+        if self.results_frame:
+            self.results_frame.show_results(result)
+
+        print("RESULT:", result)
 
 
-# MENU LATERAL
+# ---------------- SIDEBAR ----------------
 class Sidebar(ttk.Frame):
     def __init__(self, parent, load_callback):
         super().__init__(parent)
 
         self.load_callback = load_callback
+
         self.columnconfigure(0, weight=1)
 
-        ttk.Label(self, text="Ferramentas").grid(row=0, column=0, sticky="ew")
+        ttk.Label(self, text="Ferramentas").grid(row=0, column=0)
 
-        # Lista das cotas de verificação
-        ttk.Label(self, text="Cotas de verificação").grid(row=1, column=0, sticky="ew")
+        # Combobox 1
+        ttk.Label(self, text="Cotas de verificação").grid(row=1, column=0)
 
         self.cb1 = ttk.Combobox(self, state="readonly")
-        self.cb1["values"] = [
-            "Esferas",
-            "Ek Roda Dentada",
-            "Ek Engrenagem",
-            "Ek Sem-fim",
-        ]
-        self.cb1.grid(row=1, column=1, sticky="ew")
+        self.cb1["values"] = ["Esferas", "Ek Roda Dentada", "Ek Engrenagem", "Ek Sem-fim"]
+        self.cb1.grid(row=1, column=1)
 
-        # Lista das máquinas de talhagem para as rodas de muda
-        ttk.Label(self, text="Cotas de muda").grid(row=2, column=0, sticky="ew")
+        # Combobox 2
+        ttk.Label(self, text="Cotas de muda").grid(row=2, column=0)
 
         self.cb2 = ttk.Combobox(self, state="readonly")
-        self.cb2["values"] = [
-            "Rollete",
-            "Reishauer",
-        ]
-        self.cb2.grid(row=2, column=1, sticky="ew")
+        self.cb2["values"] = ["Rollete", "Reishauer"]
+        self.cb2.grid(row=2, column=1)
 
         self.frames_map = {
             "Esferas": FrameEsferas,
@@ -101,7 +121,6 @@ class Sidebar(ttk.Frame):
         self.cb2.bind("<<ComboboxSelected>>", self.on_select)
 
     def on_select(self, event):
-        # Se uma for selecionada a outra é excluída
         if event.widget == self.cb1:
             self.cb2.set("")
             value = self.cb1.get()
@@ -109,7 +128,6 @@ class Sidebar(ttk.Frame):
             self.cb1.set("")
             value = self.cb2.get()
 
-        # Cria a frame da ferramenta selecionada
         frame_class = self.frames_map.get(value)
 
         if frame_class:
@@ -117,4 +135,4 @@ class Sidebar(ttk.Frame):
 
 
 if __name__ == "__main__":
-    main()
+    Application().mainloop()

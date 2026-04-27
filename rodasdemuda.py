@@ -29,6 +29,9 @@ class Rollete:
             88 <= (C + D) <= 135
         )
 
+    def calculate(self):
+        return self.rodasdemuda()
+
     # ---------------- MAIN SEARCH ----------------
     def rodasdemuda(self, erro=0.001):
         rodas = self.conj_rodas
@@ -53,26 +56,28 @@ class Rollete:
                         if l in (i, j, k):
                             continue
 
-                        razaom = (A / B) * (C / D)
-                        err = fabs(self.razao - razaom)
+                    razaom = (A / B) * (C / D)
+                    err = fabs(self.razao - razaom)
 
-                        if err <= erro and self.limites(A, B, C, D):
-                            results.append({
-                                "A": A,
-                                "B": B,
-                                "C": C,
-                                "D": D,
-                                "erro": err,
-                                "razaom": razaom
-                            })
+                    if err <= erro and self.limites(A, B, C, D):
+                        results.append({
+                            "A": A,
+                            "B": B,
+                            "C": C,
+                            "D": D,
+                            "erro": err,
+                            "razaom": razaom
+                        })
 
-        # ---------------- REMOVE DUPLICATES ----------------
+        # REMOVE DUPLICATES
         keyfunc = lambda d: (d["A"], d["B"], d["C"], d["D"])
         results = sorted(results, key=keyfunc)
-        results = [next(g[1]) for g in groupby(results, keyfunc)]
+        results = [next(g[1]) for g in groupby(results, key=keyfunc)]
 
-        # ---------------- SORT BY ERROR ----------------
+        # SORT
         results.sort(key=itemgetter("erro"))
+
+        return results  
 
 # Lista das classes para ser chamada na app.py
 RODAS = {
