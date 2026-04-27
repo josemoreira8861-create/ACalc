@@ -3,7 +3,7 @@ from itertools import groupby
 from operator import itemgetter
 
 
-class Rollete:
+class Rollete: # Modelo Runderland 5A-4C
     def __init__(self, data):
         self.artigo = data["artigo"]
         self.modulo = data["modulo"]
@@ -76,6 +76,12 @@ class Rollete:
         results.sort(key=itemgetter("erro"))
 
         return results[:12]
+    
+class Reishauer:
+    def __init__(self, data):
+        self.artigo = data["artigo"]
+        self.modulo = data["modulo"]
+        self.beta = radians(data["beta"])
 
 # Lista das classes para ser chamada na app.py
 RODAS = {

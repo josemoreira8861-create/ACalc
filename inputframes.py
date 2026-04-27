@@ -64,6 +64,40 @@ class FrameRollete(BaseToolFrame):
             "beta": self.beta.get(),
         })
 
+# ---------------- REISHAUER ------------------
+class FrameReishauer(BaseToolFrame):
+    def __init__(self, parent, on_calculate):
+        super().__init__(parent, "reishauer", on_calculate)
+        
+        self.artigo = tk.StringVar()
+        self.sentido = tk.StringVar()
+        self.modulo = tk.DoubleVar()
+        self.beta = tk.DoubleVar()
+
+        ttk.Label(self, text="Artigo").grid(row=0, column=0)
+        ttk.Entry(self, textvariable=self.artigo).grid(row=0, column=1)
+
+        ttk.Label(self, text="Sentido").grid(row=1, column=0)
+        ttk.Combobox(self, textvariable=self.sentido,
+                     values=["Esquerda", "Direita"]).grid(row=1, column=1)
+
+        ttk.Label(self, text="Modulo").grid(row=2, column=0)
+        ttk.Entry(self, textvariable=self.modulo).grid(row=2, column=1)
+
+        ttk.Label(self, text="Beta").grid(row=3, column=0)
+        ttk.Entry(self, textvariable=self.beta).grid(row=3, column=1)
+
+        ttk.Button(self, text="Calculate", command=self.send_data)\
+            .grid(row=4, column=0, columnspan=2)
+
+    def send_data(self):
+        self.on_calculate(self.tool_name, {
+            "artigo": self.artigo.get(),
+            "sentido": self.sentido.get(),
+            "modulo": self.modulo.get(),
+            "beta": self.beta.get(),
+        })
+
 
 # ---------------- PLACEHOLDERS ----------------
 class FrameRoda(BaseToolFrame):
@@ -83,8 +117,11 @@ class FrameSemFim(BaseToolFrame):
         super().__init__(parent, "semfim", on_calculate)
         ttk.Label(self, text="Sem-fim").grid()
 
-
-class FrameReishauer(BaseToolFrame):
-    def __init__(self, parent, on_calculate):
-        super().__init__(parent, "reishauer", on_calculate)
-        ttk.Label(self, text="Reishauer").grid()
+INPUT_FRAMES = {
+    "rollete": FrameRollete,
+    "esferas": FrameEsferas,
+    "reishauer": FrameReishauer,
+    "ekroda": FrameRoda,
+    "ekengrenagem": FrameEngrenagem,
+    "sem_fim": FrameSemFim,
+}

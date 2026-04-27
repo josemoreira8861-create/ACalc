@@ -1,15 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 
-from inputframes import (
-    FrameEsferas,
-    FrameRoda,
-    FrameEngrenagem,
-    FrameSemFim,
-    FrameRollete,
-    FrameReishauer,
-)
-
+from inputframes import INPUT_FRAMES
 from cotas import COTAS
 from rodasdemuda import RODAS
 
@@ -42,7 +34,7 @@ class Application(tk.Tk):
 
         self.current_frame = None
 
-    # ---------------- LOAD INPUT FRAME ----------------
+    # ---------------- CARREGA INPUT FRAME ----------------
     def load_frame(self, frame_class):
         if self.current_frame:
             self.current_frame.destroy()
@@ -50,10 +42,9 @@ class Application(tk.Tk):
         self.current_frame = frame_class(self.content, self.handle_calculate)
         self.current_frame.grid(sticky="nsew")
 
-    # ---------------- ROUTER ----------------
+    # ---------------- CARREGA FRAME DE RESULTADOS ----------------
     def handle_calculate(self, tool, data):
 
-        # Decide which calculator set to use
         calc_class = (
             COTAS.get(tool)
             or RODAS.get(tool)
@@ -64,7 +55,7 @@ class Application(tk.Tk):
 
         result = calc_class(data).calculate()
 
-        # Switch results frame if needed
+        # Elimina frame caso se use outra ferramenta
         if tool != self.current_tool:
             if self.results_frame:
                 self.results_frame.destroy()
@@ -81,7 +72,7 @@ class Application(tk.Tk):
             self.results_frame.show_results(result)
 
 
-# ---------------- SIDEBAR ----------------
+# ---------------- MENU LATERAL ----------------
 class Sidebar(ttk.Frame):
     def __init__(self, parent, load_callback):
         super().__init__(parent)
