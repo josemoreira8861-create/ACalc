@@ -1,4 +1,4 @@
-from math import cos, radians, fabs
+from math import cos, radians, fabs, sin
 from itertools import groupby
 from operator import itemgetter
 
@@ -79,18 +79,18 @@ class Rollete: # Modelo Runderland 5A-4C
 class Reishauer: # Modelo Reishauer
     def __init__(self, data):
         self.artigo = data["artigo"]
-        self.sentido = data["sentido"]
+        self.sentido = data["sentido"].upper()
         self.modulo = data["modulo"]
         self.beta = radians(data["beta"])
 
         self.razao = 11.6909*sin(self.beta)/self.modulo
 
         self._conj_rodas = (
-            27, 28, 30, 30, 32, 33, 35, 36, 38, 39, 40, 40, 40, 42, 
-            42, 44, 45, 46, 48, 48, 50, 51, 52, 53, 54, 55, 56, 57,
-            58, 59, 60, 60, 60, 61, 62, 63, 64, 65, 67, 68, 70, 71,
-            72, 73, 74, 75, 76, 79, 82, 83, 84, 86, 89, 93, 94, 96,
-            97, 100, 105, 107, 108, 110, 120, 127)
+            35,36,38,40,40,41,42,43,44,45,45,46,47,48,49,50,50,51,52,53,
+            54,55,56,57,58,59,60,60,61,62,63,64,65,66,67,68,69,70,70,71,
+            72,73,74,75,75,76,78,80,80,81,82,84,85,86,87,88,90,90,91,92,
+            93,94,95,96,100,101,103,105,106,108,110,112,118,120
+        )
     
     def limites(self, A, B, C, D):
         total = A + B + C + D

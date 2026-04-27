@@ -7,7 +7,7 @@ class BaseResultsFrame(ttk.Frame):
         raise NotImplementedError
 
 
-# ---------------- ROLLETE ----------------
+# ---------------- RODAS DE MUDA ----------------
 class RodasResultsFrame(BaseResultsFrame):
     def __init__(self, parent):
         super().__init__(parent)
