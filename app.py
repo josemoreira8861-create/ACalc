@@ -10,6 +10,9 @@ from frames import (
     FrameReishauer,
 )
 
+from cotas import COTAS
+
+
 def main():
     app = Application()
     app.mainloop()
@@ -18,6 +21,7 @@ def main():
 class Application(tk.Tk):
     def __init__(self):
         super().__init__()
+
         self.title("ACalc")
         self.geometry("1200x700")
 
@@ -25,62 +29,66 @@ class Application(tk.Tk):
         self.columnconfigure(1, weight=5)
         self.rowconfigure(0, weight=1)
 
-        # Frame para selecionar a ferramenta
+        # Sidebar
         self.sidebar = Sidebar(self, self.load_frame)
         self.sidebar.grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
 
-        # Frame dos parametros a inserir
+        # Content area
         self.content = ttk.Frame(self)
         self.content.grid(row=0, column=1, sticky="nsew")
 
         self.current_frame = None
 
+    # ---------------- FRAME LOADER ----------------
     def load_frame(self, frame_class):
-        if self.current_frame is not None:
+        if self.current_frame:
             self.current_frame.destroy()
 
-        self.current_frame = frame_class(self.content)
+        self.current_frame = frame_class(self.content, self.handle_calculate)
         self.current_frame.pack(fill="both", expand=True)
 
-# Frame para selecionar as ferramentas
+    # ---------------- CALCULATION ROUTER ----------------
+    def handle_calculate(self, tool, data):
+        calc_class = COTAS.get(tool)
+
+        if calc_class:
+            result = calc_class(data).calculate()
+            print(f"{tool} result:", result)
+
+
+# ---------------- SIDEBAR ----------------
 class Sidebar(ttk.Frame):
     def __init__(self, parent, load_callback):
         super().__init__(parent)
 
         self.load_callback = load_callback
-
         self.columnconfigure(0, weight=1)
 
         ttk.Label(self, text="Ferramentas").grid(row=0, column=0, sticky="ew")
 
-        ttk.Label(self, text="Cotas de verificação:").grid(row=1, column=0, sticky="ew")
+        # Combobox 1
+        ttk.Label(self, text="Cotas de verificação").grid(row=1, column=0, sticky="ew")
 
-        self.dimensoes_controlo_cb = ttk.Combobox(self, state="readonly")
-        self.dimensoes_controlo_cb["values"] = (
+        self.cb1 = ttk.Combobox(self, state="readonly")
+        self.cb1["values"] = [
             "Esferas",
             "Ek Roda Dentada",
             "Ek Engrenagem",
             "Ek Sem-fim",
-        )
-        self.dimensoes_controlo_cb.grid(row=1, column=1, sticky="ew")
+        ]
+        self.cb1.grid(row=1, column=1, sticky="ew")
 
+        # Combobox 2
         ttk.Label(self, text="Cotas de muda").grid(row=2, column=0, sticky="ew")
 
-        self.cotasdemuda_cb = ttk.Combobox(self, state="readonly")
-        self.cotasdemuda_cb["values"] = (
+        self.cb2 = ttk.Combobox(self, state="readonly")
+        self.cb2["values"] = [
             "Rollete",
             "Reishauer",
-            "Reishauer Dressage",
-            "Pfauter 251",
-            "Pfauter 630",
-            "Pfauter 2300",
-            "Modul 250x5",
-            "Lidner",
-            "Heckert ZFWVG 250",
-            "Spiromatic",
-        )
-        self.cotasdemuda_cb.grid(row=2, column=1, sticky="ew")
+        ]
+        self.cb2.grid(row=2, column=1, sticky="ew")
 
+        # Map combobox values → frames
         self.frames_map = {
             "Esferas": FrameEsferas,
             "Ek Roda Dentada": FrameRoda,
@@ -90,23 +98,18 @@ class Sidebar(ttk.Frame):
             "Reishauer": FrameReishauer,
         }
 
-        self.dimensoes_controlo_cb.bind("<<ComboboxSelected>>", self.on_ferramenta_selected)
-        self.cotasdemuda_cb.bind("<<ComboboxSelected>>", self.on_cotasdemuda_selected)
+        self.cb1.bind("<<ComboboxSelected>>", self.on_select)
+        self.cb2.bind("<<ComboboxSelected>>", self.on_select)
 
-    # Carrega a frame da ferramenta selecionada
-    def on_ferramenta_selected(self, event):
-        self.cotasdemuda_cb.set("")
+    def on_select(self, event):
+        # Clear opposite combobox (mutual exclusivity)
+        if event.widget == self.cb1:
+            self.cb2.set("")
+            value = self.cb1.get()
+        else:
+            self.cb1.set("")
+            value = self.cb2.get()
 
-        value = self.dimensoes_controlo_cb.get()
-        frame_class = self.frames_map.get(value)
-
-        if frame_class:
-            self.load_callback(frame_class)
-
-    def on_cotasdemuda_selected(self, event):
-        self.dimensoes_controlo_cb.set("")
-
-        value = self.cotasdemuda_cb.get()
         frame_class = self.frames_map.get(value)
 
         if frame_class:
