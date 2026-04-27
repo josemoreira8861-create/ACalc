@@ -39,7 +39,7 @@ class Application(tk.Tk):
 
         self.current_frame = None
 
-    # ---------------- FRAME LOADER ----------------
+    # Carrega a frame da ferramenta pretendida
     def load_frame(self, frame_class):
         if self.current_frame:
             self.current_frame.destroy()
@@ -47,7 +47,7 @@ class Application(tk.Tk):
         self.current_frame = frame_class(self.content, self.handle_calculate)
         self.current_frame.pack(fill="both", expand=True)
 
-    # ---------------- CALCULATION ROUTER ----------------
+    # Vai buscar o código de cálculo da ferramenta pretendida
     def handle_calculate(self, tool, data):
         calc_class = COTAS.get(tool)
 
@@ -56,7 +56,7 @@ class Application(tk.Tk):
             print(f"{tool} result:", result)
 
 
-# ---------------- SIDEBAR ----------------
+# MENU LATERAL
 class Sidebar(ttk.Frame):
     def __init__(self, parent, load_callback):
         super().__init__(parent)
@@ -66,7 +66,7 @@ class Sidebar(ttk.Frame):
 
         ttk.Label(self, text="Ferramentas").grid(row=0, column=0, sticky="ew")
 
-        # Combobox 1
+        # Lista das cotas de verificação
         ttk.Label(self, text="Cotas de verificação").grid(row=1, column=0, sticky="ew")
 
         self.cb1 = ttk.Combobox(self, state="readonly")
@@ -78,7 +78,7 @@ class Sidebar(ttk.Frame):
         ]
         self.cb1.grid(row=1, column=1, sticky="ew")
 
-        # Combobox 2
+        # Lista das máquinas de talhagem para as rodas de muda
         ttk.Label(self, text="Cotas de muda").grid(row=2, column=0, sticky="ew")
 
         self.cb2 = ttk.Combobox(self, state="readonly")
@@ -88,7 +88,6 @@ class Sidebar(ttk.Frame):
         ]
         self.cb2.grid(row=2, column=1, sticky="ew")
 
-        # Map combobox values → frames
         self.frames_map = {
             "Esferas": FrameEsferas,
             "Ek Roda Dentada": FrameRoda,
@@ -102,7 +101,7 @@ class Sidebar(ttk.Frame):
         self.cb2.bind("<<ComboboxSelected>>", self.on_select)
 
     def on_select(self, event):
-        # Clear opposite combobox (mutual exclusivity)
+        # Se uma for selecionada a outra é excluída
         if event.widget == self.cb1:
             self.cb2.set("")
             value = self.cb1.get()
@@ -110,6 +109,7 @@ class Sidebar(ttk.Frame):
             self.cb1.set("")
             value = self.cb2.get()
 
+        # Cria a frame da ferramenta selecionada
         frame_class = self.frames_map.get(value)
 
         if frame_class:

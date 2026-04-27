@@ -1,4 +1,4 @@
-class EsferasCalculator:
+class Esferas:
     def __init__(self, data):
         self.diameter = data["diameter"]
         self.type = data["type"]
@@ -9,7 +9,7 @@ class EsferasCalculator:
         return self.diameter * 3
 
 
-# ---------------- REGISTRY ----------------
+# Lista das classes para ser chamada na app.py
 COTAS = {
-    "esferas": EsferasCalculator,
+    "esferas": Esferas,
 }
