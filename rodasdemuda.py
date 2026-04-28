@@ -1,9 +1,45 @@
 from math import cos, radians, fabs, sin
-from itertools import groupby
+from itertools import groupby, permutations
 from operator import itemgetter
 
+class RodasDeMuda:
+    def rodasdemuda(self, erro=0.0001):
+        rodas = self.conj_rodas
+        results = []
 
-class Rollete: # Modelo Runderland 5A-4C
+        for A, B, C, D in permutations(rodas, 4):
+
+            if not self.limites(A, B, C, D):
+                continue
+
+            razaom = (A / B) * (C / D)
+            err = fabs(self.razao - razaom)
+
+            if err <= erro:
+                results.append({
+                    "A": A,
+                    "B": B,
+                    "C": C,
+                    "D": D,
+                    "erro": err,
+                    "razaom": razaom
+                })
+
+        # Remove conjuntos de rodas repetidos
+        keyfunc = lambda d: (d["A"], d["B"], d["C"], d["D"])
+        results = sorted(results, key=keyfunc)
+        results = [next(g[1]) for g in groupby(results, key=keyfunc)]
+
+        # Organiza com erro ascendente
+        results.sort(key=itemgetter("erro"))
+
+        # Ficam apenas 12 resultados
+        return results[:12]
+
+    def calculate(self):
+        return self.rodasdemuda()
+
+class Rollete(RodasDeMuda): # Modelo Runderland 5A-4C
     def __init__(self, data):
         self.artigo = data["artigo"]
         self.modulo = data["modulo"]
@@ -25,67 +61,23 @@ class Rollete: # Modelo Runderland 5A-4C
             88 <= (C + D) <= 135
         )
 
+    # Esta função é chamada na acalc.py, apesar de parecer desnecessário ter esta função
+    # nas rodas de muda (visto que usam todas a função rodasdemuda()), esta torna-se
+    # útil nos cálculos das cotas de verificação que já irão usar funções diferentes,
+    # assim, generaliza-se
     def calculate(self):
         return self.rodasdemuda()
-
-    def rodasdemuda(self, erro=0.0001):
-        rodas = self.conj_rodas
-        n = len(rodas)
-
-        results = []
-
-        for i in range(n):
-            A = rodas[i]
-            for j in range(n):
-                if j == i:
-                    continue
-                B = rodas[j]
-
-                for k in range(n):
-                    if k in (i, j):
-                        continue
-                    C = rodas[k]
-
-                    for l in range(n):
-                        if l in (i, j, k):
-                            continue
-                        D = rodas[l]
-
-                        razaom = (A / B) * (C / D)
-                        err = fabs(self.razao - razaom)
-
-                        if err <= erro:
-                            if self.limites(A, B, C, D):
-                                results.append({
-                                    "A": A,
-                                    "B": B,
-                                    "C": C,
-                                    "D": D,
-                                    "erro": err,
-                                    "razaom": razaom
-                                })
-
-        # Remove instâncias repetidas
-        keyfunc = lambda d: (d["A"], d["B"], d["C"], d["D"])
-        results = sorted(results, key=keyfunc)
-        results = [next(g[1]) for g in groupby(results, key=keyfunc)]
-
-        # Organiza com erro ascendente
-        results.sort(key=itemgetter("erro"))
-
-        # Ficam apenas 12 resultados
-        return results[:12]
     
-class Reishauer: # Modelo Reishauer
+class Reishauer(RodasDeMuda):
     def __init__(self, data):
         self.artigo = data["artigo"]
-        self.sentido = data["sentido"].upper()
+        self.sentido = data["sentido"]
         self.modulo = data["modulo"]
         self.beta = radians(data["beta"])
 
         self.razao = 11.6909*sin(self.beta)/self.modulo
 
-        self._conj_rodas = (
+        self.conj_rodas = (
             35,36,38,40,40,41,42,43,44,45,45,46,47,48,49,50,50,51,52,53,
             54,55,56,57,58,59,60,60,61,62,63,64,65,66,67,68,69,70,70,71,
             72,73,74,75,75,76,78,80,80,81,82,84,85,86,87,88,90,90,91,92,
@@ -104,7 +96,7 @@ class Reishauer: # Modelo Reishauer
         ):
             return False
 
-        if self.sentido == "ESQUERDA":
+        if self.sentido == "Esquerda":
             AB = A + B
             CD = C + D
 
@@ -116,7 +108,7 @@ class Reishauer: # Modelo Reishauer
                 )
             )
 
-        elif self.sentido == "DIREITA":
+        elif self.sentido == "Direita":
             CD = C + D
 
             return (
@@ -128,59 +120,15 @@ class Reishauer: # Modelo Reishauer
 
     def calculate(self):
         return self.rodasdemuda()
-
-    def rodasdemuda(self, erro=0.0001):
-        rodas = self._conj_rodas
-        n = len(rodas)
-
-        results = []
-
-        for i in range(n):
-            A = rodas[i]
-            for j in range(n):
-                if j == i:
-                    continue
-                B = rodas[j]
-
-                for k in range(n):
-                    if k in (i, j):
-                        continue
-                    C = rodas[k]
-
-                    for l in range(n):
-                        if l in (i, j, k):
-                            continue
-                        D = rodas[l]
-
-                        razaom = (A / B) * (C / D)
-                        err = fabs(self.razao - razaom)
-
-                        if err <= erro and self.limites(A, B, C, D):
-                            results.append({
-                                "A": A,
-                                "B": B,
-                                "C": C,
-                                "D": D,
-                                "erro": err,
-                                "razaom": razaom
-                            })
-
-        keyfunc = lambda d: (d["A"], d["B"], d["C"], d["D"])
-        results = sorted(results, key=keyfunc)
-        results = [next(g[1]) for g in groupby(results, key=keyfunc)]
-
-        results.sort(key=itemgetter("erro"))
-
-        return results[:12]
     
-class ReishauerDressage: # Modelo Reishauer Dressage
+class ReishauerDressage(RodasDeMuda):
     def __init__(self, data):
         self.artigo = data["artigo"]
         self.modulo = data["modulo"]
 
         self.razao = 6/25.4*self.modulo
 
-        self._conj_rodas = (
+        self.conj_rodas = (
             35,36,38,40,40,41,42,43,44,45,45,46,47,48,49,50,50,51,
             52,53,54,55,56,57,58,59,60,60,61,62,63,64,65,66,67,68,
             69,70,70,71,72,73,74,75,75,76,78,80,80,81,82,84,85,86,
@@ -209,49 +157,43 @@ class ReishauerDressage: # Modelo Reishauer Dressage
     def calculate(self):
         return self.rodasdemuda()
 
-    def rodasdemuda(self, erro=0.0001):
-        rodas = self._conj_rodas
-        n = len(rodas)
+class Pfauter251(RodasDeMuda):
+    def __init__(self, data):
+        self.artigo = data["artigo"]
+        self.modo = data["modo"]
+        self.modulo = data["modulo"]
+        self.beta = radians(data["beta"])
+        self.num_entradas = data["num_entradas"]
 
-        results = []
+        if self.modo == "Diferencial":
+            self.razao = (2.864789*sin(self.beta))/(self.modulo*self.num_entradas)
+        elif self.modo == "Tangencial" or "Navalhão":
+            self.razao = (3*cos(self.beta))/(2*self.modulo*self.num_entradas)
+        else:
+            self.razao = None
 
-        for i in range(n):
-            A = rodas[i]
-            for j in range(n):
-                if j == i:
-                    continue
-                B = rodas[j]
+        self.conj_rodas = (
+            20,21,22,23,24,24,25,25,26,27,27,28,29,29,30,31,32,32,
+            33,34,35,36,36,37,38,38,39,40,40,41,42,42,43,44,45,45,
+            46,47,48,48,49,50,51,52,53,54,55,56,57,58,58,59,60,60,
+            61,62,63,64,64,65,66,67,68,69,70,71,71,72,72,73,74,75,
+            76,77,78,79,80,81,82,83,84,86,87,88,89,92,94,95,96,97,
+            98,101,102,103,107,109,113,127)
 
-                for k in range(n):
-                    if k in (i, j):
-                        continue
-                    C = rodas[k]
+    
+    def limites(self, A, B, C, D):
+        AB = A + B
+        CD = C + D
+        min_CD = B+21 if B>=39 else 60 
 
-                    for l in range(n):
-                        if l in (i, j, k):
-                            continue
-                        D = rodas[l]
-
-                        razaom = (A / B) * (C / D)
-                        err = fabs(self.razao - razaom)
-
-                        if err <= erro and self.limites(A, B, C, D):
-                            results.append({
-                                "A": A,
-                                "B": B,
-                                "C": C,
-                                "D": D,
-                                "erro": err,
-                                "razaom": razaom
-                            })
-
-        keyfunc = lambda d: (d["A"], d["B"], d["C"], d["D"])
-        results = sorted(results, key=keyfunc)
-        results = [next(g[1]) for g in groupby(results, key=keyfunc)]
-
-        results.sort(key=itemgetter("erro"))
-
-        return results[:12]
+        return (
+            80 <= AB <= 170 and
+            min_CD <= CD <= 180 and
+            D <= 127
+        )
+    
+    def calculate(self):
+        return self.rodasdemuda()
 
 
 # Lista das classes para ser chamada na acalc.py
@@ -259,4 +201,5 @@ RODAS = {
     "rollete": Rollete,
     "reishauer": Reishauer,
     "reishauer_dressage": ReishauerDressage,
+    "pfauter251": Pfauter251,
 }

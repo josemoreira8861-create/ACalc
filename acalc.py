@@ -7,7 +7,8 @@ from inputframes import (FrameRollete,
     FrameRoda,
     FrameEngrenagem,
     FrameSemFim,
-    FrameReishauerDressage,)
+    FrameReishauerDressage,
+    FramePfauter,)
 from cotas import COTAS
 from rodasdemuda import RODAS
 
@@ -34,10 +35,9 @@ class Application(tk.Tk):
         self.content = ttk.Frame(self)
         self.content.grid(row=0, column=1, sticky="nsew")
 
-        # Resultados
+
         self.results_frame = None
         self.current_tool = None
-
         self.current_frame = None
 
     # ---------------- CARREGA INPUT FRAME ----------------
@@ -100,7 +100,7 @@ class Sidebar(ttk.Frame):
         ttk.Label(self, text="Cotas de muda").grid(row=2, column=0)
 
         self.cb2 = ttk.Combobox(self, state="readonly")
-        self.cb2["values"] = ["Rollete", "Reishauer", "Reishauer Dressage"]
+        self.cb2["values"] = ["Rollete", "Reishauer", "Reishauer Dressage", "Pfauter 251"]
         self.cb2.grid(row=2, column=1)
 
         self.frames_map = {
@@ -111,6 +111,7 @@ class Sidebar(ttk.Frame):
             "Rollete": FrameRollete,
             "Reishauer": FrameReishauer,
             "Reishauer Dressage": FrameReishauerDressage,
+            "Pfauter 251": lambda parent, cb: FramePfauter(parent, cb, "pfauter251", "Pfauter 251"),
         }
 
         self.cb1.bind("<<ComboboxSelected>>", self.on_select)

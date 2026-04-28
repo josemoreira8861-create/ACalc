@@ -71,5 +71,6 @@ RESULT_FRAMES = {
     "rollete": RodasResultsFrame,
     "reishauer": RodasResultsFrame,
     "reishauer_dressage":RodasResultsFrame,
+    "pfauter251": RodasResultsFrame,
     "esferas": EsferasResultsFrame,
 }

@@ -26,7 +26,7 @@ class FrameEsferas(BaseToolFrame):
         ttk.Label(self, text="Diameter").grid(row=2, column=0)
         ttk.Entry(self, textvariable=self.diameter_var).grid(row=2, column=1)
 
-        ttk.Button(self, text="Calculate", command=self.send_data)\
+        ttk.Button(self, text="Calcular", command=self.send_data)\
             .grid(row=3, column=0, columnspan=2)
 
 
@@ -50,13 +50,13 @@ class FrameRollete(BaseToolFrame):
         ttk.Label(self, text="Artigo").grid(row=1, column=0)
         ttk.Entry(self, textvariable=self.artigo).grid(row=1, column=1)
 
-        ttk.Label(self, text="Modulo").grid(row=2, column=0)
+        ttk.Label(self, text="Módulo").grid(row=2, column=0)
         ttk.Entry(self, textvariable=self.modulo).grid(row=2, column=1)
 
-        ttk.Label(self, text="Beta").grid(row=3, column=0)
+        ttk.Label(self, text="Beta (graus)").grid(row=3, column=0)
         ttk.Entry(self, textvariable=self.beta).grid(row=3, column=1)
 
-        ttk.Button(self, text="Calculate", command=self.send_data)\
+        ttk.Button(self, text="Calcular", command=self.send_data)\
             .grid(row=4, column=0, columnspan=2)
 
     def send_data(self):
@@ -81,16 +81,16 @@ class FrameReishauer(BaseToolFrame):
         ttk.Entry(self, textvariable=self.artigo).grid(row=1, column=1)
 
         ttk.Label(self, text="Sentido").grid(row=2, column=0)
-        ttk.Combobox(self, textvariable=self.sentido,
+        ttk.Combobox(self, state="readonly", textvariable=self.sentido,
                      values=["Esquerda", "Direita"]).grid(row=2, column=1)
 
-        ttk.Label(self, text="Modulo").grid(row=3, column=0)
+        ttk.Label(self, text="Módulo").grid(row=3, column=0)
         ttk.Entry(self, textvariable=self.modulo).grid(row=3, column=1)
 
-        ttk.Label(self, text="Beta").grid(row=4, column=0)
+        ttk.Label(self, text="Beta (graus)").grid(row=4, column=0)
         ttk.Entry(self, textvariable=self.beta).grid(row=4, column=1)
 
-        ttk.Button(self, text="Calculate", command=self.send_data)\
+        ttk.Button(self, text="Calcular", command=self.send_data)\
             .grid(row=5, column=0, columnspan=2)
 
     def send_data(self):
@@ -112,10 +112,10 @@ class FrameReishauerDressage(BaseToolFrame):
         ttk.Label(self, text="Artigo").grid(row=1, column=0)
         ttk.Entry(self, textvariable=self.artigo).grid(row=1, column=1)
 
-        ttk.Label(self, text="Modulo").grid(row=2, column=0)
+        ttk.Label(self, text="Módulo").grid(row=2, column=0)
         ttk.Entry(self, textvariable=self.modulo).grid(row=2, column=1)
 
-        ttk.Button(self, text="Calculate", command=self.send_data)\
+        ttk.Button(self, text="Calcular", command=self.send_data)\
             .grid(row=3, column=0, columnspan=2)
 
     def send_data(self):
@@ -123,6 +123,46 @@ class FrameReishauerDressage(BaseToolFrame):
             "artigo": self.artigo.get(),
 
             "modulo": self.modulo.get(),
+        })
+
+# ------------------------- PFAUTER & MODUL ------------------------
+class FramePfauter(BaseToolFrame):
+    def __init__(self, parent, on_calculate, tool_name, title):
+        super().__init__(parent, tool_name, on_calculate)
+        ttk.Label(self, text=title).grid(row=0, column=0, columnspan=2)
+        
+        self.artigo = tk.StringVar()
+        self.modo = tk.StringVar()
+        self.modulo = tk.DoubleVar()
+        self.beta = tk.DoubleVar()
+        self.num_entradas = tk.IntVar()
+
+        ttk.Label(self, text="Artigo").grid(row=1, column=0)
+        ttk.Entry(self, textvariable=self.artigo).grid(row=1, column=1)
+
+        ttk.Label(self, text="Modo").grid(row=2, column=0)
+        ttk.Combobox(self, state="readonly", textvariable=self.modo,
+                     values=["Diferencial", "Tangencial", "Navalhão"]).grid(row=2, column=1)
+
+        ttk.Label(self, text="Módulo (Mn)").grid(row=3, column=0)
+        ttk.Entry(self, textvariable=self.modulo).grid(row=3, column=1)
+
+        ttk.Label(self, text="Beta (graus)").grid(row=4, column=0)
+        ttk.Entry(self, textvariable=self.beta).grid(row=4, column=1)
+
+        ttk.Label(self, text="Nº de entradas").grid(row=5, column=0)
+        ttk.Entry(self, textvariable=self.num_entradas).grid(row=5, column=1)
+
+        ttk.Button(self, text="Calcular", command=self.send_data)\
+            .grid(row=6, column=0, columnspan=2)
+
+    def send_data(self):
+        self.on_calculate(self.tool_name, {
+            "artigo": self.artigo.get(),
+            "modo": self.modo.get(),
+            "modulo": self.modulo.get(),
+            "beta": self.beta.get(),
+            "num_entradas": self.num_entradas.get(),
         })
 
 # ---------------- PLACEHOLDERS ----------------
