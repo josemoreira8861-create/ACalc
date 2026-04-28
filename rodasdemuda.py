@@ -3,7 +3,7 @@ from itertools import groupby, permutations
 from operator import itemgetter
 
 class RodasDeMuda:
-    def rodasdemuda(self, erro=0.0001):
+    def rodasdemuda(self, erro=0.001):
         rodas = self.conj_rodas
         results = []
 
@@ -167,7 +167,7 @@ class Pfauter251(RodasDeMuda):
 
         if self.modo == "Diferencial":
             self.razao = (2.864789*sin(self.beta))/(self.modulo*self.num_entradas)
-        elif self.modo == "Tangencial" or "Navalhão":
+        elif self.modo in ("Tangencial", "Navalhão"):
             self.razao = (3*cos(self.beta))/(2*self.modulo*self.num_entradas)
         else:
             self.razao = None
