@@ -100,7 +100,9 @@ class Sidebar(ttk.Frame):
         ttk.Label(self, text="Cotas de muda").grid(row=2, column=0)
 
         self.cb2 = ttk.Combobox(self, state="readonly")
-        self.cb2["values"] = ["Rollete", "Reishauer", "Reishauer Dressage", "Pfauter 251", "Pfauter 630"]
+        self.cb2["values"] = [
+            "Rollete", "Reishauer", "Reishauer Dressage", "Pfauter 251", 
+            "Pfauter 630", "Pfauter 2300", "Modul 250x5"]
         self.cb2.grid(row=2, column=1)
 
         self.frames_map = {
@@ -113,7 +115,8 @@ class Sidebar(ttk.Frame):
             "Reishauer Dressage": FrameReishauerDressage,
             "Pfauter 251": lambda parent, cb: FramePfauter(parent, cb, "pfauter251", "Pfauter 251"),
             "Pfauter 630": lambda parent, cb: FramePfauter(parent, cb, "pfauter630", "Pfauter 630"),
-
+            "Pfauter 2300": lambda parent, cb: FramePfauter(parent, cb, "pfauter2300", "Pfauter 2300"),
+            "Modul 250x5": lambda parent, cb: FramePfauter(parent, cb, "modul250x5", "Modul 250x5"),
         }
 
         self.cb1.bind("<<ComboboxSelected>>", self.on_select)

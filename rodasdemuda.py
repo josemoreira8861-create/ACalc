@@ -231,7 +231,85 @@ class Pfauter630(RodasDeMuda):
     
     def calculate(self):
         return self.rodasdemuda()
+    
+class Pfauter2300(RodasDeMuda):
+    def __init__(self, data):
+        self.artigo = data["artigo"]
+        self.modo = data["modo"]
+        self.modulo = data["modulo"]
+        self.beta = radians(data["beta"])
+        self.num_entradas = data["num_entradas"]
 
+        if self.modo == "Diferencial":
+            self.razao = (12.732395*sin(self.beta))/(self.modulo*self.num_entradas)
+        elif self.modo == "Tangencial" or "Navalhão":
+            self.razao = (8*cos(self.beta))/(3*self.modulo*self.num_entradas)
+        else:
+            self.razao = None
+
+        self.conj_rodas = (
+            20,21,22,23,24,25,26,26,27,28,29,30,31,32,33,34,
+            35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,
+            51,52,53,54,54,55,56,57,58,59,60,61,62,63,64,65,
+            66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,80,
+            82,84,85,85,90,90)
+    
+    def limites(self, A, B, C, D):
+        AB = A + B
+        CD = C + D
+        min_CD = B+31 if B>=49 else 80
+        #max_BC = 145 Existe no programa em PHP esta limitação
+
+        return (
+            50 <= AB <= 107 and # AB <= 150 nos apontamentos
+            min_CD <= CD <= 160 and
+            D <= 110
+        )
+    
+    def calculate(self):
+        return self.rodasdemuda()
+    
+class Modul(RodasDeMuda): # Modelo Modul 250x5
+    def __init__(self, data):
+        self.artigo = data["artigo"]
+        self.modo = data["modo"]
+        self.modulo = data["modulo"]
+        self.beta = radians(data["beta"])
+        self.num_entradas = data["num_entradas"]
+
+        if self.modo == "Diferencial":
+            self.razao = (6*sin(self.beta))/(self.modulo*self.num_entradas)
+        elif self.modo == "Tangencial" or "Navalhão":
+            self.razao = (3*cos(self.beta))/(self.modulo*self.num_entradas)
+        else:
+            self.razao = None
+
+        self.conj_rodas = (
+            20,21,22,22,23,24,25,26,26,27,28,29,29,29,30,30,31,32,
+            33,34,35,36,36,37,38,39,40,40,41,42,43,44,45,45,46,47,
+            47,48,48,49,50,50,51,52,53,54,55,56,57,58,59,60,60,61,
+            62,62,63,64,65,66,67,67,68,69,70,70,71,71,72,72,73,74,
+            75,76,77,78,79,80,81,82,83,84,85,86,87,89,90,91,92,94,
+            95,96,97,98,100,101,103,105,109,110,120)
+
+    
+    def limites(self, A, B, C, D):
+        # existe a possibilidade de colocar as rodas de muda em "linha" ou introduzir uma ou duas rodas intermediarias
+        # nestas situacões os limites são diferentes e apenas podem ser confirmados graficamente
+        # Neste caso despreza-se as situacões anteriores tentando colocar limites o mais universais possíveis
+        AB = A + B
+        CD = C + D
+        min_CD = B+24 if B>=46 else 70
+
+        return (
+            A <= 100 and
+            77 <= AB <= 194 and
+            min_CD <= CD <= 200 and
+            D <= 120
+        )
+    
+    def calculate(self):
+        return self.rodasdemuda()
 
 # Lista das classes para ser chamada na acalc.py
 RODAS = {
@@ -239,5 +317,7 @@ RODAS = {
     "reishauer": Reishauer,
     "reishauer_dressage": ReishauerDressage,
     "pfauter251": Pfauter251,
-    "pfauter630": Pfauter630
+    "pfauter630": Pfauter630,
+    "pfauter2300": Pfauter2300,
+    "modul250x5": Modul,
 }

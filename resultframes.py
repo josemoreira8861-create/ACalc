@@ -73,5 +73,7 @@ RESULT_FRAMES = {
     "reishauer_dressage":RodasResultsFrame,
     "pfauter251": RodasResultsFrame,
     "pfauter630": RodasResultsFrame,
+    "pfauter2300": RodasResultsFrame,
+    "modul250x5": RodasResultsFrame,
     "esferas": EsferasResultsFrame,
 }
