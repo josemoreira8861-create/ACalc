@@ -8,7 +8,8 @@ from inputframes import (FrameRollete,
     FrameEngrenagem,
     FrameSemFim,
     FrameReishauerDressage,
-    FramePfauter,)
+    FramePfauter,
+    FrameLindner,)
 from cotas import COTAS
 from rodasdemuda import RODAS
 
@@ -102,7 +103,8 @@ class Sidebar(ttk.Frame):
         self.cb2 = ttk.Combobox(self, state="readonly")
         self.cb2["values"] = [
             "Rollete", "Reishauer", "Reishauer Dressage", "Pfauter 251", 
-            "Pfauter 630", "Pfauter 2300", "Modul 250x5"]
+            "Pfauter 630", "Pfauter 2300", "Modul 250x5", "Lindner", 
+            "Heckert ZFWVG 250",]
         self.cb2.grid(row=2, column=1)
 
         self.frames_map = {
@@ -117,6 +119,9 @@ class Sidebar(ttk.Frame):
             "Pfauter 630": lambda parent, cb: FramePfauter(parent, cb, "pfauter630", "Pfauter 630"),
             "Pfauter 2300": lambda parent, cb: FramePfauter(parent, cb, "pfauter2300", "Pfauter 2300"),
             "Modul 250x5": lambda parent, cb: FramePfauter(parent, cb, "modul250x5", "Modul 250x5"),
+            "Lindner": lambda parent, cb: FrameLindner(parent, cb, "lindner", "Lindner"),
+            "Heckert ZFWVG 250": lambda parent, cb: FrameLindner(parent, cb, "heckert", "Heckert ZFWVG 250")
+
         }
 
         self.cb1.bind("<<ComboboxSelected>>", self.on_select)

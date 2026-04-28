@@ -1,4 +1,4 @@
-from math import cos, radians, fabs, sin
+from math import cos, radians, fabs, sin, pi
 from itertools import groupby, permutations
 from operator import itemgetter
 
@@ -205,7 +205,7 @@ class Pfauter630(RodasDeMuda):
 
         if self.modo == "Diferencial":
             self.razao = (8.952466*sin(self.beta))/(self.modulo*self.num_entradas)
-        elif self.modo == "Tangencial" or "Navalhão":
+        elif self.modo in ("Tangencial", "Navalhão"):
             self.razao = (3*cos(self.beta))/(self.modulo*self.num_entradas)
         else:
             self.razao = None
@@ -242,7 +242,7 @@ class Pfauter2300(RodasDeMuda):
 
         if self.modo == "Diferencial":
             self.razao = (12.732395*sin(self.beta))/(self.modulo*self.num_entradas)
-        elif self.modo == "Tangencial" or "Navalhão":
+        elif self.modo in ("Tangencial", "Navalhão"):
             self.razao = (8*cos(self.beta))/(3*self.modulo*self.num_entradas)
         else:
             self.razao = None
@@ -279,7 +279,7 @@ class Modul(RodasDeMuda): # Modelo Modul 250x5
 
         if self.modo == "Diferencial":
             self.razao = (6*sin(self.beta))/(self.modulo*self.num_entradas)
-        elif self.modo == "Tangencial" or "Navalhão":
+        elif self.modo in ("Tangencial", "Navalhão"):
             self.razao = (3*cos(self.beta))/(self.modulo*self.num_entradas)
         else:
             self.razao = None
@@ -311,6 +311,68 @@ class Modul(RodasDeMuda): # Modelo Modul 250x5
     def calculate(self):
         return self.rodasdemuda()
 
+class Lindner(RodasDeMuda):
+    def __init__(self, data):
+        self.artigo = data["artigo"]
+        self.modulo_axial = data["modulo_axial"]
+        self.num_entradas = data["num_entradas"]
+
+        if self.modulo_axial<=2:
+            self.razao =  6*pi/25.4*self.modulo_axial*self.num_entradas
+        else:
+            self.razao =  6*pi/(25.4*12)*self.modulo_axial*self.num_entradas
+
+        self.conj_rodas = (
+            24,27,30,30,32,33,34,36,39,40,42,45,45,47,48,48,51,52,
+            54,58,60,60,60,63,65,65,66,68,70,70,70,72,75,75,76,80,
+            86,90,90,91,94,95,96,100,104,110,120,120,127)
+
+    def limites(self, A, B, C, D):
+
+        min_CD = B+33 if B >=27 else 60
+
+        return (
+            (A + B) <= 194 and
+            A <= 100 and
+            B <= 100 and
+            D <= 120 and
+            (C + D) >= min_CD
+        )
+
+    def calculate(self):
+        return self.rodasdemuda()
+    
+class Heckert(RodasDeMuda): # Modelo Heckert ZFWVG 250
+    def __init__(self, data):
+        self.artigo = data["artigo"]
+        self.modulo_axial = data["modulo_axial"]
+        self.num_entradas = data["num_entradas"]
+
+        if (self.modulo_axial*pi*self.num_entradas) <= 40:
+            self.razao =  (self.modulo_axial*self.num_entradas*47)/(6*95)
+        else:
+            self.razao =  (self.modulo_axial*self.num_entradas*47)/(40*95)
+
+        self.conj_rodas = (
+            20,20,21,22,24,25,27,30,34,35,36,38,40,44,45,
+            46,46,47,48,50,51,52,54,55,56,58,60,62,65,68,
+            70,75,80,85,90,95,100,120,127)
+
+    def limites(self, A, B, C, D):
+
+        min_CD = B+33 if B >=27 else 60
+
+        return (
+            (A + B) <= 194 and
+            A <= 100 and
+            B <= 100 and
+            D <= 120 and
+            (C + D) >= min_CD
+        )
+
+    def calculate(self):
+        return self.rodasdemuda()
+
 # Lista das classes para ser chamada na acalc.py
 RODAS = {
     "rollete": Rollete,
@@ -320,4 +382,6 @@ RODAS = {
     "pfauter630": Pfauter630,
     "pfauter2300": Pfauter2300,
     "modul250x5": Modul,
+    "lindner": Lindner,
+    "heckert": Heckert,
 }

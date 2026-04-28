@@ -165,6 +165,35 @@ class FramePfauter(BaseToolFrame):
             "num_entradas": self.num_entradas.get(),
         })
 
+# ----------------------- LINDNER & HECKERT -----------------------
+class FrameLindner(BaseToolFrame):
+    def __init__(self, parent, on_calculate, tool_name, title):
+        super().__init__(parent, tool_name, on_calculate)
+        ttk.Label(self, text=title).grid(row=0, column=0, columnspan=2)
+
+        self.artigo = tk.StringVar()
+        self.modulo_axial = tk.DoubleVar()
+        self.num_entradas = tk.IntVar()
+
+        ttk.Label(self, text="Artigo").grid(row=1, column=0)
+        ttk.Entry(self, textvariable=self.artigo).grid(row=1, column=1)
+
+        ttk.Label(self, text="Módulo axial").grid(row=2, column=0)
+        ttk.Entry(self, textvariable=self.modulo_axial).grid(row=2, column=1)
+
+        ttk.Label(self, text="Nº de entradas").grid(row=3, column=0)
+        ttk.Entry(self, textvariable=self.num_entradas).grid(row=3, column=1)
+
+        ttk.Button(self, text="Calcular", command=self.send_data)\
+            .grid(row=4, column=0, columnspan=2)
+
+    def send_data(self):
+        self.on_calculate(self.tool_name, {
+            "artigo": self.artigo.get(),
+            "modulo_axial": self.modulo_axial.get(),
+            "num_entradas": self.num_entradas.get(),
+        })
+
 # ---------------- PLACEHOLDERS ----------------
 class FrameRoda(BaseToolFrame):
     def __init__(self, parent, on_calculate):
