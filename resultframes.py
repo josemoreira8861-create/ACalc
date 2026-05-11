@@ -66,6 +66,18 @@ class EsferasResultsFrame(BaseResultsFrame):
     def show_results(self, results):
         self.label.config(text=str(results))
 
+# ---------------- RODA DENTADA ----------------
+class RodaResultsFrame(BaseResultsFrame):
+    def __init__(self, parent):
+        super().__init__(parent)
+
+        self.text = ttk.Label(self, justify="left")
+        self.text.grid()
+
+    def show_results(self, results):
+        formatted = "\n".join(f"{k}: {v}" for k, v in results.items())
+        self.text.config(text=formatted)
+
 
 RESULT_FRAMES = {
     "rollete": RodasResultsFrame,
@@ -78,4 +90,5 @@ RESULT_FRAMES = {
     "lindner": RodasResultsFrame,
     "heckert": RodasResultsFrame,
     "esferas": EsferasResultsFrame,
+    "roda": RodaResultsFrame,
 }

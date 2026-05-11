@@ -53,6 +53,7 @@ class Roda:
             self.K = self.z1*(self.B - self.Bv)
             self.d_a = self.modulo * (self.z1/cos(self.beta) + 2 + 2*self.x1 - 2*self.K)
     
+    # DIN 3960, DIN 3961 e DIN 3967
     def backlash(self):
 
         serie_cd = [
@@ -85,11 +86,12 @@ class Roda:
         self.fa = self.Ess
 
         # circumferential backlash
-        self.jt = 0 - 2*self.Ess/cos(self.beta) + 2*self.fa * tan(self.alpha)/cos(self.beta)
+        self.jt = (0 - 2*self.Ess/cos(self.beta) + 2*self.fa * tan(self.alpha)/cos(self.beta)) *10**(-3)
 
         # normal backlash
-        self.jn = self.jt * cos(self.alpha) * cos(self.beta)
+        self.jn = self.jt * cos(self.alpha) * cos(self.beta) * 10**(-3)
 
+    # DIN 3960, DIN 3967 e ISO 2771
     def cota_sobre_k_dentes(self):
 
         if self.k_dentes == 0:
@@ -116,7 +118,26 @@ class Roda:
 
         self.Wk_final = f"{self.Wk:.4f} ± {self.Tw/2:.4f}"
 
+    def calculate(self):
+        self.correcao()
+        self.backlash()
+        self.cota_sobre_k_dentes()
+
+        return {
+            "Diâmetro primitivo": self.d1,
+            "Desvio (x1)": self.x1,
+            "Diâmetro exterior corrigido": self.d_a,
+            "Tolerância da espessura dos dentes": self.Ts,
+            "Folga circular entre dentes": self.jt,
+            "Folga normal entre dentes": self.jn,
+            "Nº de dentes do Ek ": self.k_dentes,
+            "Tolerância": self.Tw,
+            "Ek_final": self.Wk_final,
+        }
+
+
 # Lista das classes para ser chamada na acalc.py
 COTAS = {
     "esferas": Esferas,
+    "roda": Roda,
 }
