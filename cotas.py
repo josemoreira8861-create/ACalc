@@ -1,5 +1,63 @@
-from math import cos, radians, fabs, sin, pi, atan, tan, acos
+from math import cos, radians, sin, pi, atan, tan, acos
 
+# ----------------------- Função para o backlash -----------------------
+# DIN 3960, DIN 3961 e DIN 3967
+def backlash(d1, beta, alpha):
+
+    serie_cd = [
+        (0, 10, -40), (10, 50, -54),
+        (50, 125, -70), (125, 280, -95),
+        (280, 560, -130), (560, 1000, -175),
+        (1000, 1600, -240), (1600, 2500, -320),
+        (2500, 4000, -430), (4000, 6300, -580),
+        (6300, 10000, -780),
+    ]
+
+    serie_25 = [
+        (0, 10, 20), (10, 50, 30),
+        (50, 125, 40), (125, 280, 50),
+        (280, 560, 60), (560, 1000, 80),
+        (1000, 1600, 100), (1600, 2500, 130),
+        (2500, 4000, 160), (4000, 6300, 200),
+        (6300, 10000, 250),
+    ]
+
+    Ess = None
+    Ts = None
+
+    for lower, upper, value in serie_cd:
+        if lower < d1 <= upper:
+            Ess = value
+            break
+
+    for lower, upper, value in serie_25:
+        if lower < d1 <= upper:
+            Ts = value
+            break
+
+    Esi = Ess - Ts
+    fa = Ess
+
+    # circumferential backlash
+    jt = (
+        0
+        - 2 * Ess / cos(beta)
+        + 2 * fa * tan(alpha) / cos(beta)
+    ) * 10**(-3)
+
+    # normal backlash
+    jn = jt * cos(alpha) * cos(beta) * 10**(-3)
+
+    return {
+        "Ess": Ess,
+        "Ts": Ts,
+        "Esi": Esi,
+        "fa": fa,
+        "jt": jt,
+        "jn": jn,
+    }
+
+# ----------------------- Esferas -----------------------
 class Esferas:
     def __init__(self, data):
         self.diameter = data["diameter"]
@@ -10,6 +68,7 @@ class Esferas:
             return self.diameter * 2
         return self.diameter * 3
 
+# ----------------------- Wk Roda Dentada -----------------------
 class Roda:
     def __init__(self, data):
         self.tipo_dentado = data["tipo"]
@@ -52,44 +111,6 @@ class Roda:
             self.Bv = cos(self.alpha_ap)/cos(self.alpha_ap_func) - 1
             self.K = self.z1*(self.B - self.Bv)
             self.d_a = self.modulo * (self.z1/cos(self.beta) + 2 + 2*self.x1 - 2*self.K)
-    
-    # DIN 3960, DIN 3961 e DIN 3967
-    def backlash(self):
-
-        serie_cd = [
-            (0, 10, -40), (10, 50, -54),
-            (50, 125, -70),(125, 280, -95), 
-            (280, 560, -130),(560, 1000, -175), 
-            (1000, 1600, -240),(1600, 2500, -320), 
-            (2500, 4000, -430),(4000, 6300, -580), 
-            (6300, 10000, -780),
-            ]
-        
-        for lower, upper, value in serie_cd:
-            if lower < self.d1 <= upper:
-                self.Ess = value
-        
-        serie_25 = [
-            (0, 10, 20),(10, 50, 30), 
-            (50, 125, 40),(125, 280, 50), 
-            (280, 560, 60),(560, 1000, 80), 
-            (1000, 1600, 100),(1600, 2500, 130), 
-            (2500, 4000, 160),(4000, 6300, 200), 
-            (6300, 10000, 250),
-            ]
-        
-        for lower, upper, value in serie_25:
-            if lower < self.d1 <= upper:
-                self.Ts = value
-        
-        self.Esi = self.Ess - self.Ts
-        self.fa = self.Ess
-
-        # circumferential backlash
-        self.jt = (0 - 2*self.Ess/cos(self.beta) + 2*self.fa * tan(self.alpha)/cos(self.beta)) *10**(-3)
-
-        # normal backlash
-        self.jn = self.jt * cos(self.alpha) * cos(self.beta) * 10**(-3)
 
     # DIN 3960, DIN 3967 e ISO 2771
     def cota_sobre_k_dentes(self):
@@ -120,7 +141,20 @@ class Roda:
 
     def calculate(self):
         self.correcao()
-        self.backlash()
+
+        self.valores_backlash = backlash(
+            self.d1,
+            self.beta,
+            self.alpha
+        )
+
+        self.Ess = self.valores_backlash["Ess"]
+        self.Ts = self.valores_backlash["Ts"]
+        self.Esi = self.valores_backlash["Esi"]
+        self.fa = self.valores_backlash["fa"]
+        self.jt = self.valores_backlash["jt"]
+        self.jn = self.valores_backlash["jn"]
+
         self.cota_sobre_k_dentes()
 
         return {
