@@ -198,7 +198,7 @@ class FrameLindner(BaseToolFrame):
 class FrameRoda(BaseToolFrame):
     def __init__(self, parent, on_calculate):
         super().__init__(parent, "roda", on_calculate)
-        ttk.Label(self, text="Roda Dentada").grid(row=0, column=0, columnspan=2)
+        ttk.Label(self, text="Ek Roda Dentada").grid(row=0, column=0, columnspan=2)
 
         self.artigo = tk.StringVar()
         self.tipo_dentado = tk.StringVar()
