@@ -1,7 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
 
-from inputframes import (FrameRollete,
+from inputframes import (
+    FrameRollete,
     FrameEsferas,
     FrameReishauer,
     FrameRoda,
