@@ -127,12 +127,12 @@ class Roda:
             "Diâmetro primitivo": self.d1,
             "Desvio (x1)": self.x1,
             "Diâmetro exterior corrigido": self.d_a,
-            "Tolerância da espessura dos dentes": self.Ts,
+            "Tolerância da espessura dos dentes (pm)": self.Ts,
             "Folga circular entre dentes": self.jt,
             "Folga normal entre dentes": self.jn,
             "Nº de dentes do Ek ": self.k_dentes,
             "Tolerância": self.Tw,
-            "Ek_final": self.Wk_final,
+            "Ek": self.Wk_final,
         }
 
 

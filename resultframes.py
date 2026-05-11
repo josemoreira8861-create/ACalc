@@ -71,12 +71,35 @@ class RodaResultsFrame(BaseResultsFrame):
     def __init__(self, parent):
         super().__init__(parent)
 
-        self.text = ttk.Label(self, justify="left")
-        self.text.grid()
+        columns = ("parametro", "valor")
+
+        self.tree = ttk.Treeview(self, columns=columns, show="headings")
+
+        self.tree.heading("parametro", text="Parâmetro")
+        self.tree.heading("valor", text="Carreto")
+
+        self.tree.column("parametro", width=250)
+        self.tree.column("valor", width=200)
+
+        self.tree.grid(row=0, column=0, sticky="nsew")
+
+        self.rowconfigure(0, weight=1)
+        self.columnconfigure(0, weight=1)
 
     def show_results(self, results):
-        formatted = "\n".join(f"{k}: {v}" for k, v in results.items())
-        self.text.config(text=formatted)
+
+        # limpar tabela
+        for row in self.tree.get_children():
+            self.tree.delete(row)
+
+        # inserir resultados
+        for parametro, valor in results.items():
+
+            # formatar floats
+            if isinstance(valor, float):
+                valor = f"{valor:.6f}"
+
+            self.tree.insert("", "end", values=(parametro, valor))
 
 
 RESULT_FRAMES = {
