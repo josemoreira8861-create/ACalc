@@ -13,7 +13,6 @@ from inputframes import (
     FrameLindner,)
 from cotas import COTAS
 from rodasdemuda import RODAS
-
 from resultframes import RESULT_FRAMES
 
 
