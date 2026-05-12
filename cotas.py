@@ -32,7 +32,7 @@ def backlash(d1, beta, alpha, allowance_series, tolerance_series):
     ) * 10**(-3)
 
     # normal backlash
-    jn = jt * cos(alpha) * cos(beta) * 10**(-3)
+    jn = jt * cos(alpha) * cos(beta)
 
     return {
         "Ess": Ess,
@@ -146,18 +146,28 @@ class Roda:
         self.jt = self.valores_backlash["jt"]
         self.jn = self.valores_backlash["jn"]
 
+        self.classe = f"{self.allowance_series}{self.tolerance_series}"
+
+        if self.tipo_dentado == "Helicoidal":
+            self.tipo = f"{self.tipo_dentado} ({self.direcao_dentado})"
+        else:
+            self.tipo = f"{self.tipo_dentado}"
+
         self.cota_sobre_k_dentes()
 
         return {
-            "Diâmetro primitivo": self.d1,
-            "Desvio (x1)": self.x1,
-            "Diâmetro exterior corrigido": self.d_a,
-            "Tolerância da espessura dos dentes (pm)": self.Ts,
-            "Folga circular entre dentes": self.jt,
-            "Folga normal entre dentes": self.jn,
-            "Nº de dentes do Ek ": self.k_dentes,
-            "Tolerância": self.Tw,
-            "Ek": self.Wk_final,
+            "Artigo": self.artigo,
+            "Classe": self.classe,
+            "Tipo de dentado": self.tipo,
+            "Diâmetro primitivo, d₁ (mm)": self.d1,
+            "Fator de correção, x₁": self.x1,
+            "Diâmetro exterior corrigido, dₐ (mm)": self.d_a,
+            "Tolerância, Tₛ (pm)": self.Ts,
+            "Folga circular entre dentes, jₜ (mm)": self.jt,
+            "Folga normal entre dentes, jₙ (mm)": self.jn,
+            "Nº de dentes do Eₖ": self.k_dentes,
+            "Tolerância, Tw (mm)": self.Tw,
+            "Eₖ (mm)": self.Wk_final,
         }
 
 

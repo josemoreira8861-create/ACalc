@@ -230,11 +230,25 @@ class FrameRoda(BaseToolFrame):
         ttk.Combobox(self, state="readonly", textvariable=self.direcao_dentado,
                      values=["Esquerda", "Direita"]).grid(row=5, column=1)
         
-        ttk.Label(self, text="Diâmetro primitivo (0 = Auto)").grid(row=6, column=0)
-        ttk.Entry(self, textvariable=self.d1).grid(row=6, column=1)
+        ttk.Label(self, text="Diâmetro primitivo").grid(row=6, column=0)
+        frame_d1 = ttk.Frame(self)
+        frame_d1.grid(row=6, column=1)
+        ttk.Entry(frame_d1, textvariable=self.d1, width=15).grid(row=0, column=0)
+        ttk.Button(
+            frame_d1,
+            text="Auto",
+            command=lambda: self.d1.set(0)
+        ).grid(row=0, column=1, padx=5)
 
-        ttk.Label(self, text="Nº de dentes do Ek (0 = Auto)").grid(row=7, column=0)
-        ttk.Entry(self, textvariable=self.k_dentes).grid(row=7, column=1)
+        ttk.Label(self, text="Nº de dentes do Ek").grid(row=7, column=0)
+        frame_k = ttk.Frame(self)
+        frame_k.grid(row=7, column=1)
+        ttk.Entry(frame_k, textvariable=self.k_dentes, width=15).grid(row=0, column=0)
+        ttk.Button(
+            frame_k,
+            text="Auto",
+            command=lambda: self.k_dentes.set(0)
+        ).grid(row=0, column=1, padx=5)
 
         ttk.Label(self, text="Ângulo de hélice (graus)").grid(row=8, column=0)
         ttk.Entry(self, textvariable=self.beta).grid(row=8, column=1)
@@ -252,7 +266,7 @@ class FrameRoda(BaseToolFrame):
         ttk.Entry(self, textvariable=self.b).grid(row=12, column=1)
 
         ttk.Button(self, text="Calcular", command=self.send_data)\
-            .grid(row=13, column=0, columnspan=2)
+            .grid(row=13, column=0, columnspan=2, pady=5, sticky="ew")
         
     def send_data(self):
           self.on_calculate(self.tool_name, {

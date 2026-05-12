@@ -71,6 +71,19 @@ class RodaResultsFrame(BaseResultsFrame):
     def __init__(self, parent):
         super().__init__(parent)
 
+        style = ttk.Style()
+
+        style.configure(
+            "Treeview",
+            font=(None, 12),
+            rowheight=28
+        )
+
+        style.configure(
+            "Treeview.Heading",
+            font=(None, 12, "bold")
+        )
+
         columns = ("parametro", "valor")
 
         self.tree = ttk.Treeview(self, columns=columns, show="headings")
