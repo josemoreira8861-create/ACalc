@@ -201,6 +201,8 @@ class FrameRoda(BaseToolFrame):
         ttk.Label(self, text="Ek Roda Dentada").grid(row=0, column=0, columnspan=2)
 
         self.artigo = tk.StringVar()
+        self.allowance_series = tk.StringVar()
+        self.tolerance_series = tk.StringVar()
         self.tipo_dentado = tk.StringVar()
         self.direcao_dentado = tk.StringVar()
         self.d1 = tk.DoubleVar()
@@ -214,41 +216,49 @@ class FrameRoda(BaseToolFrame):
         ttk.Label(self, text="Artigo").grid(row=1, column=0)
         ttk.Entry(self, textvariable=self.artigo).grid(row=1, column=1)
 
-        ttk.Label(self, text="Tipo de dentado").grid(row=2, column=0)
+        ttk.Label(self, text="Classe de tolerâncias").grid(row=2, column=0)
+        ttk.Combobox(self, state="readonly", textvariable=self.allowance_series,
+                     values=["a", "ab", "b", "bc", "c", "cd", "d", "e", "f", "g", "h"]).grid(row=2, column=1)
+        ttk.Combobox(self, state="readonly", textvariable=self.tolerance_series,
+                     values=["21", "22", "23", "24", "25", "26", "27", "28", "29", "30"]).grid(row=3, column=1)
+
+        ttk.Label(self, text="Tipo de dentado").grid(row=4, column=0)
         ttk.Combobox(self, state="readonly", textvariable=self.tipo_dentado,
-                     values=["Helicoidal", "Reto"]).grid(row=2, column=1)
+                     values=["Helicoidal", "Reto"]).grid(row=4, column=1)
         
-        ttk.Label(self, text="Direção do dentado").grid(row=3, column=0)
+        ttk.Label(self, text="Direção do dentado").grid(row=5, column=0)
         ttk.Combobox(self, state="readonly", textvariable=self.direcao_dentado,
-                     values=["Esquerda", "Direita"]).grid(row=3, column=1)
+                     values=["Esquerda", "Direita"]).grid(row=5, column=1)
         
-        ttk.Label(self, text="Diâmetro primitivo (0 = Auto)").grid(row=4, column=0)
-        ttk.Entry(self, textvariable=self.d1).grid(row=4, column=1)
+        ttk.Label(self, text="Diâmetro primitivo (0 = Auto)").grid(row=6, column=0)
+        ttk.Entry(self, textvariable=self.d1).grid(row=6, column=1)
 
-        ttk.Label(self, text="Nº de dentes do Ek (0 = Auto)").grid(row=5, column=0)
-        ttk.Entry(self, textvariable=self.k_dentes).grid(row=5, column=1)
+        ttk.Label(self, text="Nº de dentes do Ek (0 = Auto)").grid(row=7, column=0)
+        ttk.Entry(self, textvariable=self.k_dentes).grid(row=7, column=1)
 
-        ttk.Label(self, text="Ângulo de hélice (graus)").grid(row=6, column=0)
-        ttk.Entry(self, textvariable=self.beta).grid(row=6, column=1)
+        ttk.Label(self, text="Ângulo de hélice (graus)").grid(row=8, column=0)
+        ttk.Entry(self, textvariable=self.beta).grid(row=8, column=1)
 
-        ttk.Label(self, text="Ângulo de pressão (graus)").grid(row=7, column=0)
-        ttk.Entry(self, textvariable=self.alpha).grid(row=7, column=1)
+        ttk.Label(self, text="Ângulo de pressão (graus)").grid(row=9, column=0)
+        ttk.Entry(self, textvariable=self.alpha).grid(row=9, column=1)
 
-        ttk.Label(self, text="Módulo").grid(row=8, column=0)
-        ttk.Entry(self, textvariable=self.modulo).grid(row=8, column=1)
+        ttk.Label(self, text="Módulo").grid(row=10, column=0)
+        ttk.Entry(self, textvariable=self.modulo).grid(row=10, column=1)
 
-        ttk.Label(self, text="Nº de dentes").grid(row=9, column=0)
-        ttk.Entry(self, textvariable=self.z1).grid(row=9, column=1)
+        ttk.Label(self, text="Nº de dentes").grid(row=11, column=0)
+        ttk.Entry(self, textvariable=self.z1).grid(row=11, column=1)
 
-        ttk.Label(self, text="Largura do dentado").grid(row=10, column=0)
-        ttk.Entry(self, textvariable=self.b).grid(row=10, column=1)
+        ttk.Label(self, text="Largura do dentado").grid(row=12, column=0)
+        ttk.Entry(self, textvariable=self.b).grid(row=12, column=1)
 
         ttk.Button(self, text="Calcular", command=self.send_data)\
-            .grid(row=11, column=0, columnspan=2)
+            .grid(row=13, column=0, columnspan=2)
         
     def send_data(self):
           self.on_calculate(self.tool_name, {
             "artigo": self.artigo.get(),
+            "allowance_series": self.allowance_series.get(),
+            "tolerance_series": self.tolerance_series.get(),
             "tipo": self.tipo_dentado.get(),
             "direcao": self.direcao_dentado.get(),
             "diametro primitivo": self.d1.get(),

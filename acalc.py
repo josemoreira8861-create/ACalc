@@ -99,7 +99,7 @@ class Sidebar(ttk.Frame):
         self.cb1.grid(row=1, column=1)
 
         # Combobox 2
-        ttk.Label(self, text="Cotas de muda").grid(row=2, column=0)
+        ttk.Label(self, text="Rodas de muda").grid(row=2, column=0)
 
         self.cb2 = ttk.Combobox(self, state="readonly")
         self.cb2["values"] = [

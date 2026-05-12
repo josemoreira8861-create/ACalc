@@ -1,36 +1,22 @@
 from math import cos, radians, sin, pi, atan, tan, acos
+from din3967_tables import ALLOWANCE_SERIES, TOLERANCE_SERIES
 
 # ----------------------- Função para o backlash -----------------------
 # DIN 3960, DIN 3961 e DIN 3967
-def backlash(d1, beta, alpha):
+def backlash(d1, beta, alpha, allowance_series, tolerance_series):
 
-    serie_cd = [
-        (0, 10, -40), (10, 50, -54),
-        (50, 125, -70), (125, 280, -95),
-        (280, 560, -130), (560, 1000, -175),
-        (1000, 1600, -240), (1600, 2500, -320),
-        (2500, 4000, -430), (4000, 6300, -580),
-        (6300, 10000, -780),
-    ]
-
-    serie_25 = [
-        (0, 10, 20), (10, 50, 30),
-        (50, 125, 40), (125, 280, 50),
-        (280, 560, 60), (560, 1000, 80),
-        (1000, 1600, 100), (1600, 2500, 130),
-        (2500, 4000, 160), (4000, 6300, 200),
-        (6300, 10000, 250),
-    ]
+    serie_allowance = ALLOWANCE_SERIES[allowance_series]
+    serie_tolerance = TOLERANCE_SERIES[tolerance_series]
 
     Ess = None
     Ts = None
 
-    for lower, upper, value in serie_cd:
+    for lower, upper, value in serie_allowance:
         if lower < d1 <= upper:
             Ess = value
             break
 
-    for lower, upper, value in serie_25:
+    for lower, upper, value in serie_tolerance:
         if lower < d1 <= upper:
             Ts = value
             break
@@ -71,6 +57,9 @@ class Esferas:
 # ----------------------- Wk Roda Dentada -----------------------
 class Roda:
     def __init__(self, data):
+        self.artigo = data["artigo"]
+        self.allowance_series = data["allowance_series"]
+        self.tolerance_series = data["tolerance_series"]
         self.tipo_dentado = data["tipo"]
         self.direcao_dentado = data["direcao"]
         self.d1 = data["diametro primitivo"]
@@ -137,7 +126,7 @@ class Roda:
 
         self.Tw = self.Ts * cos(self.alpha) * 10**(-3)
 
-        self.Wk_final = f"{self.Wk:.4f} ± {self.Tw/2:.4f}"
+        self.Wk_final = f"{self.Wk:.5f} ± {self.Tw/2:.5f}"
 
     def calculate(self):
         self.correcao()
@@ -145,7 +134,9 @@ class Roda:
         self.valores_backlash = backlash(
             self.d1,
             self.beta,
-            self.alpha
+            self.alpha,
+            self.allowance_series,
+            self.tolerance_series,
         )
 
         self.Ess = self.valores_backlash["Ess"]
