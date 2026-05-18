@@ -54,6 +54,75 @@ class RodasResultsFrame(BaseResultsFrame):
                 r["D"],
             ))
 
+# ---------------- ENGRENAGEM ----------------
+class EngrenagemResultsFrame(BaseResultsFrame):
+    def __init__(self, parent):
+        super().__init__(parent)
+
+        style = ttk.Style()
+
+        style.configure(
+            "Treeview",
+            font=(None, 12),
+            rowheight=28
+        )
+
+        style.configure(
+            "Treeview.Heading",
+            font=(None, 12, "bold")
+        )
+
+        columns = ("parametro", "pinhao", "roda")
+
+        self.tree = ttk.Treeview(
+            self,
+            columns=columns,
+            show="headings"
+        )
+
+        self.tree.heading("parametro", text="Parâmetro")
+        self.tree.heading("pinhao", text="Carreto")
+        self.tree.heading("roda", text="Roda")
+
+        self.tree.column("parametro", width=280)
+        self.tree.column("pinhao", width=180)
+        self.tree.column("roda", width=180)
+
+        self.tree.grid(row=0, column=0, sticky="nsew")
+
+        self.rowconfigure(0, weight=1)
+        self.columnconfigure(0, weight=1)
+
+    def show_results(self, results):
+
+        # limpar tabela
+        for row in self.tree.get_children():
+            self.tree.delete(row)
+
+        pinhao = results["pinhao"]
+        roda = results["roda"]
+
+        pinhao_items = list(pinhao.items())
+        roda_items = list(roda.items())
+
+        for (param_p, valor_p), (_, valor_r) in zip(pinhao_items, roda_items):
+
+            # formatar floats
+            if isinstance(valor_p, float):
+                valor_p = f"{valor_p:.6f}"
+
+            if isinstance(valor_r, float):
+                valor_r = f"{valor_r:.6f}"
+
+            self.tree.insert(
+                "",
+                "end",
+                values=(
+                    param_p,
+                    valor_p,
+                    valor_r
+                )
+            )
 
 # ---------------- ESFERAS ----------------
 class EsferasResultsFrame(BaseResultsFrame):
@@ -127,4 +196,5 @@ RESULT_FRAMES = {
     "heckert": RodasResultsFrame,
     "esferas": EsferasResultsFrame,
     "roda": RodaResultsFrame,
+    "engrenagem": EngrenagemResultsFrame,
 }

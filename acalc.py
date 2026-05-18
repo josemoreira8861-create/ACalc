@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 
 from inputframes import (
     FrameRollete,
@@ -60,7 +60,15 @@ class Application(tk.Tk):
         if not calc_class:
             return
 
-        result = calc_class(data).calculate()
+        try:
+            result = calc_class(data).calculate()
+
+        except Exception as erro:
+            messagebox.showerror(
+                "Erro de cálculo",
+                str(erro)
+            )
+            return
 
         # Elimina frame caso se use outra ferramenta
         if tool != self.current_tool:

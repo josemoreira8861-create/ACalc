@@ -284,13 +284,114 @@ class FrameRoda(BaseToolFrame):
             "largura do dentado": self.b.get(),
         })
 
-# ---------------- PLACEHOLDERS ----------------
+# ---------------- RODA DENTADA ----------------
 class FrameEngrenagem(BaseToolFrame):
     def __init__(self, parent, on_calculate):
         super().__init__(parent, "engrenagem", on_calculate)
-        ttk.Label(self, text="Engrenagem").grid()
+        ttk.Label(self, text="Ek Engrenagem").grid(row=0, column=0, columnspan=2)
 
+        self.artigo = tk.StringVar()
+        self.allowance_series = tk.StringVar()
+        self.tolerance_series = tk.StringVar()
+        self.tipo_dentado = tk.StringVar()
+        self.direcao_dentado = tk.StringVar()
+        self.a = tk.DoubleVar()
+        self.k_dentes_pinhao = tk.IntVar() # Pinhão = Carreto
+        self.k_dentes_roda = tk.IntVar()
+        self.beta = tk.DoubleVar()
+        self.alpha = tk.DoubleVar()
+        self.modulo = tk.DoubleVar()
+        self.z1 = tk.IntVar()
+        self.z2 = tk.IntVar()
+        self.b = tk.DoubleVar()
 
+        ttk.Label(self, text="Artigo").grid(row=1, column=0)
+        ttk.Entry(self, textvariable=self.artigo).grid(row=1, column=1)
+
+        ttk.Label(self, text="Classe de tolerâncias").grid(row=2, column=0)
+        ttk.Combobox(self, state="readonly", textvariable=self.allowance_series,
+                     values=["a", "ab", "b", "bc", "c", "cd", "d", "e", "f", "g", "h"]).grid(row=2, column=1)
+        ttk.Combobox(self, state="readonly", textvariable=self.tolerance_series,
+                     values=["21", "22", "23", "24", "25", "26", "27", "28", "29", "30"]).grid(row=3, column=1)
+
+        ttk.Label(self, text="Tipo de dentado").grid(row=4, column=0)
+        ttk.Combobox(self, state="readonly", textvariable=self.tipo_dentado,
+                     values=["Helicoidal", "Reto"]).grid(row=4, column=1)
+        
+        ttk.Label(self, text="Direção do dentado").grid(row=5, column=0)
+        ttk.Combobox(self, state="readonly", textvariable=self.direcao_dentado,
+                     values=["Esquerda", "Direita"]).grid(row=5, column=1)
+        
+        ttk.Label(self, text="Entre-eixo de funcionamento").grid(row=6, column=0)
+        frame_d1 = ttk.Frame(self)
+        frame_d1.grid(row=6, column=1)
+        ttk.Entry(frame_d1, textvariable=self.a, width=15).grid(row=0, column=0)
+        ttk.Button(
+            frame_d1,
+            text="Auto",
+            command=lambda: self.a.set(0)
+        ).grid(row=0, column=1, padx=5)
+
+        ttk.Label(self, text="Nº de dentes do Ek CARRETO").grid(row=7, column=0)
+        frame_k = ttk.Frame(self)
+        frame_k.grid(row=7, column=1)
+        ttk.Entry(frame_k, textvariable=self.k_dentes_pinhao, width=15).grid(row=0, column=0)
+        ttk.Button(
+            frame_k,
+            text="Auto",
+            command=lambda: self.k_dentes_pinhao.set(0)
+        ).grid(row=0, column=1, padx=5)
+
+        ttk.Label(self, text="Nº de dentes do Ek RODA").grid(row=8, column=0)
+        frame_k = ttk.Frame(self)
+        frame_k.grid(row=8, column=1)
+        ttk.Entry(frame_k, textvariable=self.k_dentes_roda, width=15).grid(row=0, column=0)
+        ttk.Button(
+            frame_k,
+            text="Auto",
+            command=lambda: self.k_dentes_roda.set(0)
+        ).grid(row=0, column=1, padx=5)
+
+        ttk.Label(self, text="Ângulo de hélice (graus)").grid(row=9, column=0)
+        ttk.Entry(self, textvariable=self.beta).grid(row=9, column=1)
+
+        ttk.Label(self, text="Ângulo de pressão (graus)").grid(row=10, column=0)
+        ttk.Entry(self, textvariable=self.alpha).grid(row=10, column=1)
+
+        ttk.Label(self, text="Módulo").grid(row=11, column=0)
+        ttk.Entry(self, textvariable=self.modulo).grid(row=11, column=1)
+
+        ttk.Label(self, text="Nº de dentes CARRETO").grid(row=12, column=0)
+        ttk.Entry(self, textvariable=self.z1).grid(row=12, column=1)
+
+        ttk.Label(self, text="Nº de dentes RODA").grid(row=13, column=0)
+        ttk.Entry(self, textvariable=self.z2).grid(row=13, column=1)
+
+        ttk.Label(self, text="Largura do dentado").grid(row=14, column=0)
+        ttk.Entry(self, textvariable=self.b).grid(row=14, column=1)
+
+        ttk.Button(self, text="Calcular", command=self.send_data)\
+            .grid(row=15, column=0, columnspan=2, pady=5, sticky="ew")
+        
+    def send_data(self):
+          self.on_calculate(self.tool_name, {
+            "artigo": self.artigo.get(),
+            "allowance_series": self.allowance_series.get(),
+            "tolerance_series": self.tolerance_series.get(),
+            "tipo": self.tipo_dentado.get(),
+            "direcao": self.direcao_dentado.get(),
+            "entre eixo": self.a.get(),
+            "k dentes pinhao": self.k_dentes_pinhao.get(),
+            "k dentes roda": self.k_dentes_roda.get(),
+            "angulo de helice": self.beta.get(),
+            "angulo de pressao": self.alpha.get(),
+            "modulo": self.modulo.get(),
+            "numero de dentes pinhao": self.z1.get(),
+            "numero de dentes roda": self.z2.get(),
+            "largura do dentado": self.b.get(),
+        })
+
+# ---------------- PLACEHOLDERS ----------------
 class FrameSemFim(BaseToolFrame):
     def __init__(self, parent, on_calculate):
         super().__init__(parent, "semfim", on_calculate)
